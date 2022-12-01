@@ -13,11 +13,11 @@ function solveSDE!(ν,μ,σ,t_start,t_stop,t_save,X_start,Bt_samples,X,samples,p
     Δt, h = p.Δt_SDE, p.h_SDE
     Nt = round(Int,(t_stop - t_start)/Δt) + 1
 
-    X[1,:,:] = X_start   
+    X[1,:,:] .= X_start   
 
     for i = 1:p.Ns
         for t=1:Nt-1
-            X[t+1,:,i] = X[t,:,i] + Δt * drift(X[t,:,i],ν,μ,p.A) + 
+            X[t+1,:,i] .= X[t,:,i] + Δt * drift(X[t,:,i],ν,μ,p.A) + 
                                     h * diffusion(X[t,:,i],σ,p.d) * Bt_samples[i,t]
         end
     end

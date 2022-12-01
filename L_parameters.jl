@@ -1,27 +1,27 @@
 
-
-@with_kw struct SDEmodel
+@with_kw struct SDEmodel{T}
 
     # MODEL
-    ν = 1.0
-    μ = 1.0
-    σ = 0.01
+    ν::T = 1.0
+    μ::T = 1.0
+    σ::T = 1.0
 
-    d = 2
-    T = 5.0
-    X₀ = ones(d)
+    d::Int = 2
+    T_end::T = 1.0
+    X₀::Vector{T} = ones(d)
 
     # NUMERICAL
-    Δt_SDE = 1e-3
-    h_SDE = sqrt(Δt_SDE)
-    Ns = 100
+    Δt_SDE::T = 1e-3
+    h_SDE::T = sqrt(Δt_SDE)
+    Ns::Int = 1000
     
     # DATA
-    t_data = 0.1:0.1:T
+    t_data::Vector{T} = collect(0.1:0.1:T_end)
 
     # AUXILIARY 
-    Bt = MultivariateNormal(zeros(d),I(d))
-    A = diagm([k^2 for k in 1:d])
+    Bt::MvNormal{T, Distributions.PDMats.PDiagMat{T, Vector{T}}, Vector{T}} = 
+                                         MultivariateNormal(zeros(T,d),I(d))
+    A::Matrix{T} = diagm([T(k)^2 for k in 1:d])
 end
 
 
@@ -37,12 +37,12 @@ end
 
 function drift_Linear(x,ν,A)
     """linear vector value drift""" 
-    return - p.ν * p.A * x 
+    return - ν * A * x 
 end
 
 function drift_nonLinear(x,μ)
     """nonlinear vector value drift""" 
-    return  p.μ * B₀(x)
+    return  μ * B₀(x)
 end
 
 function drift(x,ν,μ,A)
@@ -52,6 +52,6 @@ end
 
 function diffusion(x,σ,d)
     """full vector value diffusion"""
-    return p.σ * I(p.d)
+    return σ * I(d)
 end
 
